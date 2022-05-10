@@ -7,4 +7,4 @@ cd -
 # containerd runtime import 
 # docker save local_discourse/web_only > web_only.tar
 # ctr -n=k8s.io images import web_only.tar && rm -f web_only.tar
-kubectl apply -f discourse.yaml ingress.yaml  
+kubectl apply -f discourse.yaml -f ingress.yaml  
