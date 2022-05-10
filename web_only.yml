@@ -1,0 +1,122 @@
+# IMPORTANT: SET A SECRET PASSWORD in Postgres for the Discourse User
+# TODO: change SOME_SECRET in this template
+
+templates:
+  - "templates/web.template.yml"
+  - "templates/web.ratelimited.template.yml"
+  - "templates/web.china.template.yml"
+## Uncomment these two lines if you wish to add Lets Encrypt (https)
+  #- "templates/web.ssl.template.yml"
+  #- "templates/web.letsencrypt.ssl.template.yml"
+
+## which TCP/IP ports should this container expose?
+## If you want Discourse to share a port with another webserver like Apache or nginx,
+## see https://meta.discourse.org/t/17247 for details
+expose:
+  - "80:80"   # http
+#  - "443:443" # https
+
+# Use 'links' key to link containers together, aka use Docker --link flag.
+#links:
+#  - link:
+#      name: data
+#      alias: data
+
+# any extra arguments for Docker?
+# docker_args:
+
+params:
+  ## Which Git revision should this container use? (default: tests-passed)
+  #version: tests-passed
+
+env:
+  LC_ALL: zh_CN.UTF-8
+  LANG: zh_CN.UTF-8
+  LANGUAGE: zh_CN.UTF-8
+  EMBER_CLI_PROD_ASSETS: 1
+
+  DISCOURSE_DEFAULT_LOCALE: zh_CN
+
+  ## How many concurrent web requests are supported? Depends on memory and CPU cores.
+  ## will be set automatically by bootstrap based on detected CPUs, or you can override
+  #UNICORN_WORKERS: 3
+
+  ## TODO: The domain name this Discourse instance will respond to
+  DISCOURSE_HOSTNAME: 'nurses512.cn'
+
+  ## Uncomment if you want the container to be started with the same
+  ## hostname (-h option) as specified above (default "$hostname-$config")
+  #DOCKER_USE_HOSTNAME: true
+
+  ## TODO: List of comma delimited emails that will be made admin and developer
+  ## on initial signup example 'user1@example.com,user2@example.com'
+  DISCOURSE_DEVELOPER_EMAILS: 'me@jokey.li'
+
+  ## TODO: The SMTP mail server used to validate new accounts and send notifications
+  # SMTP ADDRESS, username, and password are required
+  # WARNING the char '#' in SMTP password can cause problems!
+  DISCOURSE_SMTP_ADDRESS: xxxxxx
+  DISCOURSE_SMTP_PORT: 587
+  DISCOURSE_SMTP_USER_NAME: xxxx
+  DISCOURSE_SMTP_PASSWORD: "xxxx"
+  #DISCOURSE_SMTP_ENABLE_START_TLS: true           # (optional, default true)
+  DISCOURSE_SMTP_DOMAIN: example.com
+  DISCOURSE_NOTIFICATION_EMAIL: service@example.com
+
+  ## If you added the Lets Encrypt template, uncomment below to get a free SSL certificate
+  #LETSENCRYPT_ACCOUNT_EMAIL: me@example.com
+
+  ## TODO: configure connectivity to the databases
+  DISCOURSE_DB_SOCKET: ''
+  DISCOURSE_DB_USERNAME: discourse
+  DISCOURSE_DB_PASSWORD: xxx
+  DISCOURSE_DB_HOST: postgres.production.svc.cluster.local
+  DISCOURSE_REDIS_HOST: redis.production.svc.cluster.local
+
+  ## The http or https CDN address for this Discourse instance (configured to pull)
+  ## see https://meta.discourse.org/t/14857 for details
+  # DISCOURSE_CDN_URL: http://cdn.nurses512.cn
+  
+  ## The maxmind geolocation IP address key for IP address lookup
+  ## see https://meta.discourse.org/t/-/137387/23 for details
+  #DISCOURSE_MAXMIND_LICENSE_KEY: 1234567890123456
+
+## Plugins go here
+## see https://meta.discourse.org/t/19157 for details
+hooks:
+  before_code:
+    - exec:
+        cd: /var/www/discourse
+        cmd:
+          - git remote remove origin
+          - git remote add origin https://ghproxy.com/https://github.com/discourse/discourse.git 
+  after_code:
+    - exec:
+        cd: $home/plugins
+        cmd:
+          - git clone https://ghproxy.com/https://github.com/discourse/docker_manager.git
+          - git clone https://ghproxy.com/https://github.com/discourse/discourse-sitemap.git
+          - git clone https://ghproxy.com/https://github.com/discourse/discourse-solved.git
+          - git clone https://ghproxy.com/https://github.com/discourse/discourse-translator.git
+          - git clone https://ghproxy.com/https://github.com/discourse/discourse-spoiler-alert.git
+          - git clone https://ghproxy.com/https://github.com/discourse/discourse-oauth2-basic.git
+          - git clone https://ghproxy.com/https://github.com/discourse/discourse-calendar.git
+          - git clone https://ghproxy.com/https://github.com/discourse/discourse-checklist.git
+          - git clone https://ghproxy.com/https://github.com/discourse/discourse-apple-auth.git
+          - git clone https://ghproxy.com/https://github.com/discourse/discourse-openid-connect.git
+
+## Remember, this is YAML syntax - you can only have one block with a name
+run:
+  - exec: echo "Beginning of custom commands"
+
+  ## If you want to configure password login for root, uncomment and change:
+  ## Use only one of the following lines:
+  #- exec: /usr/sbin/usermod -p 'PASSWORD_HASH' root
+  #- exec: /usr/sbin/usermod -p "$(mkpasswd -m sha-256 'RAW_PASSWORD')" root
+
+  ## If you want to authorized additional users, uncomment and change:
+  #- exec: ssh-import-id username
+  #- exec: ssh-import-id anotherusername
+
+  - exec: echo "End of custom commands"
+  - exec: awk -F\# '{print $1;}' ~/.ssh/authorized_keys | awk 'BEGIN { print "Authorized SSH keys for this container:"; } NF>=2 {print $NF;}'

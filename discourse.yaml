@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: discourse
+  namespace: production
+  labels:
+    app: discourse
+spec:
+  ports:
+  - port: 80
+    name: discourse
+  clusterIP: None
+  selector:
+    app: discourse
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: discourse
+  namespace: production
+spec:
+  serviceName: "discourse"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discourse
+  template:
+    metadata:
+      labels:
+        app: discourse
+    spec:
+      nodeSelector:
+        region: cn
+      containers:
+      - name: discourse
+        image: docker.io/local_discourse/web_only
+        command: ["/sbin/boot"]
+        env:
+          # proxy optional
+          - name: HTTP_PROXY
+            value: ""
+          - name: http_proxy
+            value: ""
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+          name: discourse
+        volumeMounts:
+        - name: data
+          mountPath: /shared
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 500Mi
+
+

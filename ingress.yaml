@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nurses512
+  namespace: production
+spec:
+  tls:
+  - hosts:
+      - "nurses512.cn"
+    secretName: nurses512-cn-tls
+  ingressClassName: nginx
+  rules:
+    - host: nurses512.cn 
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service: 
+                name: discourse
+                port:
+                  number: 80
