@@ -25,12 +25,12 @@ Edit `web_only.yml` and set your own environment variables.
 
 #### Step 4:  build & deploy  discourse web only image
 
-Just run `build.sh` script to build and deploy discourse.
+Just run `run.sh` script to build and deploy discourse.
 
 > Certainly,  If you have customer  build requirements,  you can  also customize the build script. 
 
 ```sh
-sh build.sh 
+sh run.sh 
 ```
 
 ###### Enjoy it! if you have any questions  in install processing, please contact me and let me know that. :)
