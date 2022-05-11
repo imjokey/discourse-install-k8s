@@ -1,6 +1,6 @@
 # discourse-install-k8s
 
-Install discourse forum with web only mode in kubernetes.
+Install discourse forum in web only mode in kubernetes.
 
 ## How to install
 
