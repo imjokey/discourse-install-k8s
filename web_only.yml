@@ -92,6 +92,12 @@ hooks:
           - git remote add origin https://ghproxy.com/https://github.com/discourse/discourse.git 
   after_code:
     - exec:
+        cmd:
+          - PGPASSWORD=$DISCOURSE_DB_PASSWORD psql -U postgres -h $DISCOURSE_DB_HOST -c "CREATE USER $DISCOURSE_DB_USERNAME PASSWORD '$DISCOURSE_DB_PASSWORD';" | grep $DISCOURSE_DB_USERNAME || true
+          - PGPASSWORD=$DISCOURSE_DB_PASSWORD psql -U postgres -h $DISCOURSE_DB_HOST -c "CREATE DATABASE $DISCOURSE_DB_USERNAME OWNER $DISCOURSE_DB_USERNAME;" | grep $DISCOURSE_DB_USERNAME || true
+          - PGPASSWORD=$DISCOURSE_DB_PASSWORD psql -U $DISCOURSE_DB_USERNAME -h $DISCOURSE_DB_HOST -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;" | grep "pg_trgm" || true
+          - PGPASSWORD=$DISCOURSE_DB_PASSWORD psql -U $DISCOURSE_DB_USERNAME -h $DISCOURSE_DB_HOST -c "CREATE EXTENSION IF NOT EXISTS hstore;" | grep "hstore" || true
+    - exec:
         cd: $home/plugins
         cmd:
           - git clone https://ghproxy.com/https://github.com/discourse/docker_manager.git
