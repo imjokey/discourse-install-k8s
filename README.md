@@ -27,7 +27,7 @@ Edit `web_only.yml` and set your own environment variables.
 
 Just run `run.sh` script to build and deploy discourse.
 
-> Certainly,  If you have customer  build requirements,  you could  also customize the building script. 
+> Certainly,  If you have custom  build requirements,  you could  also customize the building script. 
 
 ```sh
 sh run.sh 
