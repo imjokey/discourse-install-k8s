@@ -10,16 +10,13 @@ Install discourse forum with web only mode in kubernetes.
 git clone https://github.com/imjokey/discourse-install-k8s.git && cd discourse-install-k8s
 ```
 
-#### Step 2:  Install  dependencies.
+#### Step 2:  Install Postgres and Redis dependencies.
 
 -  Postgress
-
   Install **kubegres**  ref:  [https://www.kubegres.io/doc/getting-started.html](https://www.kubegres.io/doc/getting-started.html) .
-
-  > Deploy smaple yamls can find in **postgres** directory. 
+    > Deploy smaple yamls can find in **postgres** directory. 
 
 -  Redis
-
   Deploy yamls  can find in **redis** directory.
 
 #### Step 3:  Configure  discourse build args
