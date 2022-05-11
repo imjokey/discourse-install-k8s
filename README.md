@@ -14,10 +14,10 @@ git clone https://github.com/imjokey/discourse-install-k8s.git && cd discourse-i
 
 -  Postgress
   Install **kubegres**  ref:  [https://www.kubegres.io/doc/getting-started.html](https://www.kubegres.io/doc/getting-started.html) .
-    > Deploy smaple yamls can find in **postgres** directory. 
+    > Deploy smaple yamls you can find in **postgres** directory. 
 
 -  Redis
-  Deploy yamls  can find in **redis** directory.
+  Deploy yamls you can find in **redis** directory.
 
 #### Step 3:  Configure  discourse build args
 
