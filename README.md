@@ -4,7 +4,7 @@ Install discourse forum in web only mode in kubernetes.
 
 ## How to install
 
-#### Step 1: Clone this project to server host what you want to install.
+#### Step 1: Clone this project to server host where you want to install.
 
 ```shell
 git clone https://github.com/imjokey/discourse-install-k8s.git && cd discourse-install-k8s
