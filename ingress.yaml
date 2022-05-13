@@ -3,6 +3,9 @@ kind: Ingress
 metadata:
   name: nurses512
   namespace: production
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 10G
+    nginx.ingress.kubernetes.io/proxy-buffer-size: 400M
 spec:
   tls:
   - hosts:
