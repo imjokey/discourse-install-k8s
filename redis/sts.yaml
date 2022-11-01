@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+  labels:
+    app: redis
+  name: redis
+  namespace: production
+spec:
+  serviceName: "redis"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+      - image: redis
+        imagePullPolicy: Always
+        name: redis
+        command: [ "redis-server", "/usr/local/etc/redis.conf" ]
+        ports:
+        - containerPort: 6379
+          protocol: TCP
+        volumeMounts:
+        - name: conf
+          mountPath: /usr/local/etc/redis.conf
+        - name: redis-persistent-storage
+          mountPath: /data
+      volumes:
+        - name: conf
+          hostPath:
+            path: /opt/migrate/redis/redis.conf
+            type: File
+      nodeSelector:
+        region: cn
+  volumeClaimTemplates:
+  - metadata:
+      name: redis-persistent-storage
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 20Gi
